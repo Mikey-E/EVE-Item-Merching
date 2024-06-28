@@ -7,7 +7,7 @@ import time
 
 #@@@ is possible that the system and location don't do anything
 
-def rank_items(regionId, systemId, locationId, fileName, volumeRatioFilter=0.1):
+def rank_items(regionId, systemId, locationId, fileName, volumeRatioFilter=0.1, brokerFeePercent=1.35, taxPercent=3.6):
 
     headers = {
         "regionId": str(regionId),
@@ -61,7 +61,11 @@ def rank_items(regionId, systemId, locationId, fileName, volumeRatioFilter=0.1):
         except ZeroDivisionError:
             continue
         
-        differential = sellAvgFivePercent - buyAvgFivePercent #@@@ might want to take into account tax/fees right here by modifying sellavg5
+        # Differential is sell price - buy price, however the sell price must shrink according to the fee and tax,
+        # and the buy price must enlarge according to the fee
+        differential = (sellAvgFivePercent - sellAvgFivePercent * ((brokerFeePercent + taxPercent)/100)) \
+                        - (buyAvgFivePercent + buyAvgFivePercent * (brokerFeePercent/100))
+
         netCashflow = differential * buyVolume # is diff * quantity, where buyVolume is the quantity here as long as it isn't too much under the sellVolume, as protected above by the set ratio.
 
         items['item'].append(name)
@@ -79,13 +83,23 @@ def main():
     parser.add_argument('--location', type=int, default=60003760, help='Default location/station (default: Jita trade hub)')
     parser.add_argument('-f', '--fileName', type=str, required=True, help='file name for valid ids')
     parser.add_argument('--volRatFilter', type=float, default=0.1, help='Minimum ratio of sells to buys')
+    parser.add_argument('--brokerFeePercent', type=float, default=1.35, help='broker fee for both buying and selling')
+    parser.add_argument('--taxPercent', type=float, default=3.6, help='tax on selling')
 
     # Parse the arguments
     args = parser.parse_args()
 
     # create the file of Ids
     start_time = time.time()
-    ranked_items = rank_items(args.region, args.system, args.location, args.fileName, args.volRatFilter)
+    ranked_items = rank_items(
+        args.region,
+        args.system,
+        args.location,
+        args.fileName,
+        args.volRatFilter,
+        args.brokerFeePercent,
+        args.taxPercent
+    )
     print(f"Took {time.time() - start_time:.3f} seconds")
 
     ranked_items.to_csv("ranked_items_region" + str(args.region) + "_system" + str(args.system) + "_location" + str(args.location)
