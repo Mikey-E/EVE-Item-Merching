@@ -4,18 +4,19 @@ import argparse
 import requests
 
 #@@@ is possible that the system and location don't do anything
-#@@@ fix the extra newline at the end of file - try writeline()???
 
 def create_valid_ids(minId, maxId, regionId, systemId, locationId):
+
     headers = {
         "regionId": str(regionId),
         "systemId" : str(systemId),
         "locationId" : str(locationId),
     }
+
     validIds = []
+
     for typeId in range(minId, maxId + 1):
         # URL for the API endpoint
-    #    url = "https://evetycoon.com/api/v1/market/stats/{regionId}/"
         url = f"https://evetycoon.com/api/v1/market/stats/{regionId}/" + str(typeId)
 
         headers["typeId"] = str(typeId)
@@ -29,7 +30,6 @@ def create_valid_ids(minId, maxId, regionId, systemId, locationId):
             data = response.json()
             if data["buyVolume"] != 0 or data["sellVolume"] != 0 or data["buyOrders"] != 0 or data["sellOrders"] != 0:
                 validIds.append(typeId)
-                print(data)
         else:
             print(f"Failed to retrieve data: {response.status_code}")
     return validIds
@@ -37,8 +37,7 @@ def create_valid_ids(minId, maxId, regionId, systemId, locationId):
 def make_file_from_ids(idList, regionId, systemId, locationId, minId, maxId):
     with open("valid_ids_region" + str(regionId) + "_system" + str(systemId) + "_location" + str(locationId)
                 + "_min" + str(minId) + "_max" + str(maxId), "w") as f:
-        for id in idList:
-            f.write(str(id) + "\n")
+        f.write("\n".join(str(id) for id in idList))
 
 def main():
     # Create the argument parser

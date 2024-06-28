@@ -5,3 +5,8 @@ This uses the https://evetycoon.com/api to gather market data for items. Referen
 
 There exists a file to find valid item ids for the market. It's necessary to run this to
 cut down on the amount of API requests that will need to be made. So run it first.
+
+python find_valid_ids.py
+
+It is possible that the 
+Next is the 
