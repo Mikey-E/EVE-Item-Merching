@@ -36,7 +36,7 @@ def create_valid_ids(minId, maxId, regionId, systemId, locationId):
 
 def make_file_from_ids(idList, regionId, systemId, locationId, minId, maxId):
     with open("valid_ids_region" + str(regionId) + "_system" + str(systemId) + "_location" + str(locationId)
-                + "_min" + str(minId) + "_max" + str(maxId), "w") as f:
+                + "_min" + str(minId) + "_max" + str(maxId) + ".txt", "w") as f:
         f.write("\n".join(str(id) for id in idList))
 
 def main():
