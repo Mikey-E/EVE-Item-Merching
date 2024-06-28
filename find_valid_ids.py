@@ -2,6 +2,7 @@
 
 import argparse
 import requests
+import time
 
 #@@@ is possible that the system and location don't do anything
 
@@ -54,7 +55,10 @@ def main():
     args = parser.parse_args()
 
     # create the file of Ids
+    start_time = time.time()
     ids = create_valid_ids(args.min, args.max, args.region, args.system, args.location)
+    print(f"Took {time.time() - start_time:.3f} seconds")
+
     make_file_from_ids(ids, args.region, args.system, args.location, args.min, args.max)
 
 if __name__ == "__main__":
