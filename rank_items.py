@@ -7,7 +7,7 @@ import time
 
 #@@@ is possible that the system and location don't do anything
 
-def rank_items(regionId, systemId, locationId, fileName):
+def rank_items(regionId, systemId, locationId, fileName, volumeRatioFilter=0.1):
 
     headers = {
         "regionId": str(regionId),
@@ -55,10 +55,11 @@ def rank_items(regionId, systemId, locationId, fileName):
         else:
             print(f"Failed to retrieve data: {stats_response.status_code}")
         
-        """#@@@ try-catch arithmetic exception
-        if sellVolume/buyVolume < 0.9: #don't want to be buying stuff I can't sell
+        try:
+            if sellVolume/buyVolume < volumeRatioFilter: #don't want to be buying stuff I can't sell
+                continue
+        except ZeroDivisionError:
             continue
-        """
         
         differential = sellAvgFivePercent - buyAvgFivePercent #@@@ might want to take into account tax/fees right here by modifying sellavg5
         netCashflow = differential * buyVolume # is diff * quantity, where buyVolume is the quantity here as long as it isn't too much under the sellVolume, as protected above by the set ratio.
