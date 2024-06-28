@@ -78,13 +78,14 @@ def main():
     parser.add_argument('--system', type=int, default=30000142, help='Default system (default: Jita)')
     parser.add_argument('--location', type=int, default=60003760, help='Default location/station (default: Jita trade hub)')
     parser.add_argument('-f', '--fileName', type=str, required=True, help='file name for valid ids')
+    parser.add_argument('--volRatFilter', type=float, default=0.1, help='Minimum ratio of sells to buys')
 
     # Parse the arguments
     args = parser.parse_args()
 
     # create the file of Ids
     start_time = time.time()
-    ranked_items = rank_items(args.region, args.system, args.location, args.fileName)
+    ranked_items = rank_items(args.region, args.system, args.location, args.fileName, args.volRatFilter)
     print(f"Took {time.time() - start_time:.3f} seconds")
 
     ranked_items.to_csv("ranked_items_region" + str(args.region) + "_system" + str(args.system) + "_location" + str(args.location)
