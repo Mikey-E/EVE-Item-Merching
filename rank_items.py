@@ -5,8 +5,6 @@ import requests
 import pandas as pd
 import time
 
-#@@@ is possible that the system and location don't do anything
-
 def rank_items(regionId, systemId, locationId, fileName, volumeRatioFilter=0.1, brokerFeePercent=1.35, taxPercent=3.6):
 
     headers = {
@@ -40,7 +38,10 @@ def rank_items(regionId, systemId, locationId, fileName, volumeRatioFilter=0.1, 
         if name_response.status_code == 200:
             # Process the JSON data
             data = name_response.json()
-            name = data["itemType"]["typeName"]
+            try:
+                name = data["itemType"]["typeName"]
+            except KeyError:
+                continue # I guess we have to skip it if it has no name
         else:
             print(f"Failed to retrieve data: {name_response.status_code}")
 
