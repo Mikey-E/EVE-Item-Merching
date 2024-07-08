@@ -44,6 +44,7 @@ def rank_items(regionId, systemId, locationId, fileName, volumeRatioFilter=0.1, 
                 continue # I guess we have to skip it if it has no name
         else:
             print(f"Failed to retrieve data: {name_response.status_code}")
+            continue
 
         # Check if the request was successful
         if stats_response.status_code == 200:
@@ -55,6 +56,7 @@ def rank_items(regionId, systemId, locationId, fileName, volumeRatioFilter=0.1, 
             sellAvgFivePercent = data["sellAvgFivePercent"]
         else:
             print(f"Failed to retrieve data: {stats_response.status_code}")
+            continue
         
         try:
             if sellVolume/buyVolume < volumeRatioFilter: #don't want to be buying stuff I can't sell
