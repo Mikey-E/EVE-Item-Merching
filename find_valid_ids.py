@@ -4,8 +4,6 @@ import argparse
 import requests
 import time
 
-#@@@ is possible that the system and location don't do anything
-
 def create_valid_ids(minId, maxId, regionId, systemId, locationId):
 
     headers = {
